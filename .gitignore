@@ -1,0 +1,4 @@
+env/
+SamServ/models/*.pth
+ObjectDetectorServ/models/
+DestripaFrames/resources/

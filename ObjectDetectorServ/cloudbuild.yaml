@@ -1,0 +1,31 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t',
+      'us-central1-docker.pkg.dev/${PROJECT_ID}/destripa-frames/object_detector_api:$COMMIT_SHA',
+      '-t',
+      'us-central1-docker.pkg.dev/${PROJECT_ID}/destripa-frames/object_detector_api:latest',
+      '.'
+    ]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push',
+      'us-central1-docker.pkg.dev/${PROJECT_ID}/destripa-frames/object_detector_api',
+      '--all-tags'
+    ]
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args:
+      - run
+      - deploy
+      - object-detector-api
+      - '--image'
+      - 'us-central1-docker.pkg.dev/${PROJECT_ID}/destripa-frames/object_detector_api:$COMMIT_SHA'
+      - '--region'
+      - us-central1
+      - '--memory'
+      - '3Gi'
+      - >-
+        --set-env-vars=MODEL_DEVICE=cpu
+      - '--allow-unauthenticated'
+    entrypoint: gcloud
